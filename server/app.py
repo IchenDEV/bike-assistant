@@ -37,17 +37,30 @@ class GpsPoller(threading.Thread):
     while gpsp.running:
       gpsd.next() #this will continue to loop and grab EACH set of gpsd info to clear the buffer
 
+# initialize the output frame and a lock used to ensure thread-safe
+# exchanges of the output frames (useful for multiple browsers/tabs
+# are viewing tthe stream)
+outputFrame = None
+lock = threading.Lock()
 gpsp = GpsPoller() # create the thread
 gpsp.start() # start it up
-
+from bmp280 import BMP280
+try:
+    from smbus2 import SMBus
+except ImportError:
+    from smbus import SMBus
 address = 0x68
 bus = smbus.SMBus(1)
 imu = MPU9250.MPU9250(bus, address)
 imu.begin()
-bmp = BMP280(port=1, mode=BMP280.FORCED_MODE, oversampling_p=BMP280.OVERSAMPLING_P_x16, oversampling_t=BMP280.OVERSAMPLING_T_x1,
-            filter=BMP280.IIR_FILTER_OFF, standby=BMP280.T_STANDBY_1000)
+vs = VideoStream(src=0).start()
+# Initialise the BMP280
+bus = SMBus(1)
+bmp280 = BMP280(i2c_dev=bus)
+
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(11, GPIO.OUT)
+GPIO.setup(12, GPIO.OUT)
 app = Flask(__name__)
 CORS(app, supports_credentials=True)  # 设置跨域
 
@@ -57,11 +70,11 @@ def index():
 
 @app.route('/location')
 def location():
-    print ('latitude' , gpsd.fix.latitude)
-    print ('longitude' , gpsd.fix.longitude)
-    print ('altitude (m)' , gpsd.fix.altitude)
     return jsonify({"code":0,"msg":"OK" ,"data":{
-        "latitude":gpsd.fix.latitude, "longitude":gpsd.fix.longitude,"altitude":gpsd.fix.altitude,"status":gpsd.fix.status,"speed":gpsd.fix.speed
+        "latitude":gpsd.fix.latitude, 
+		"longitude":gpsd.fix.longitude,
+		"altitude":gpsd.fix.altitude,"status":gpsd.fix.status,
+		"speed":gpsd.fix.speed
     } })
 
 @app.route('/posture')
@@ -78,7 +91,7 @@ def temperature():
 
 @app.route('/pressure')
 def pressure():
-    pressure = bmp.read_pressure()
+    pressure = bmp280.get_pressure()
     return jsonify({"code":0,"msg":"OK","data":pressure})
 
 
@@ -102,12 +115,12 @@ def set_light():
 
 @app.route('/light2/down')
 def get_light2():
-    GPIO.output(11, GPIO.LOW)
+    GPIO.output(12, GPIO.LOW)
     return jsonify({"code":0,"msg":"OK" })
 
 @app.route('/light2/up')
 def set_light2():
-    GPIO.output(11, GPIO.HIGH)
+    GPIO.output(12, GPIO.HIGH)
     return jsonify({"code":0,"msg":"OK" })
 
 @app.route("/video_feed")
@@ -116,8 +129,6 @@ def video_feed():
 	# type (mime type)
 	return Response(generate(),
 		mimetype = "multipart/x-mixed-replace; boundary=frame")
-
-
 
 def detect_motion(frameCount):
 	# grab global references to the video stream, output frame, and
