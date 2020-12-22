@@ -8,6 +8,7 @@ from flask import Flask
 from flask import jsonify
 from flask import request
 from flask_cors import *
+from bmp_280 import BMP280
 import threading
 from imutils.video import VideoStream
 from flask import Response
@@ -43,6 +44,8 @@ address = 0x68
 bus = smbus.SMBus(1)
 imu = MPU9250.MPU9250(bus, address)
 imu.begin()
+bmp = BMP280(port=1, mode=BMP280.FORCED_MODE, oversampling_p=BMP280.OVERSAMPLING_P_x16, oversampling_t=BMP280.OVERSAMPLING_T_x1,
+            filter=BMP280.IIR_FILTER_OFF, standby=BMP280.T_STANDBY_1000)
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(11, GPIO.OUT)
 app = Flask(__name__)
@@ -72,6 +75,12 @@ def posture():
 def temperature():
     imu.readSensor()
     return jsonify({"code":0,"msg":"OK","data":imu.Temp})
+
+@app.route('/pressure')
+def pressure():
+    pressure = bmp.read_pressure()
+    return jsonify({"code":0,"msg":"OK","data":pressure})
+
 
 @app.route('/sound/play')
 def play_sound():
