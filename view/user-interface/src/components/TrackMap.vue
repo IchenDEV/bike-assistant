@@ -22,32 +22,38 @@ export default {
   methods: {
     async pathStart() {
       this.maps = new BMapGL.Map("allmap");
-      this.maps.centerAndZoom(new BMapGL.Point(120.814224, 30.156484), 17);
+
       this.maps.enableScrollWheelZoom(true);
 
-      let p = await this.$store.dispatch("updateGeo");
+      await this.$store.dispatch("updateGeo");
       this.pl = new BMapGL.Polyline([
-        new BMapGL.Point(p.latitude, p.longitude),
-        new BMapGL.Point(p.latitude, p.longitude),
+        new BMapGL.Point(this.$store.state.environment.geo.lat,
+                this.$store.state.environment.geo.lng),
+        new BMapGL.Point(this.$store.state.environment.geo.lat,
+                this.$store.state.environment.geo.lng),
       ]);
       this.maps.addOverlay(this.pl);
 
-      let list = pl.getPath();
-      list.push(new BMapGL.Point(130.814224, 30.156484));
-      pl.setPath(list);
+      let list = this.pl.getPath();
+      list.push(new BMapGL.Point(this.$store.state.environment.geo.lat,
+                this.$store.state.environment.geo.lng));
+      this.pl.setPath(list);
 
-      this.mk = new BMapGL.Marker(new BMapGL.Point(130.814224, 30.156484));
+      this.mk = new BMapGL.Marker(new BMapGL.Point(this.$store.state.environment.geo.lat,
+                this.$store.state.environment.geo.lng));
 
-      this.map.addOverlay(this.mk);
+      this.maps.addOverlay(this.mk);
       this.timer = setInterval(this.updatePotion, 1000);
     },
     async updatePotion() {
-      let p = await this.$store.dispatch("updateGeo");
+      await this.$store.dispatch("updateGeo");
       let list = this.pl.getPath();
-      const point=new BMapGL.Point(p.latitude, p.longitude);
+      console.log(this.$store.state.environment.geo)
+      const point=new BMapGL.Point(this.$store.state.environment.geo.lat,
+                this.$store.state.environment.geo.lng);
       list.push(point);
       this.pl.setPath(list);
-      that.map.panTo(point);
+      this.maps.panTo(point);
 
     },
   },

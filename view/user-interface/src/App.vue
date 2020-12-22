@@ -34,4 +34,8 @@ export default {
 .anchorBL{
   display: none;
 }
+html{
+  overflow-y: hidden;
+
+}
 </style>

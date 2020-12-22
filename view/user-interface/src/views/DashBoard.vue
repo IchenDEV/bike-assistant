@@ -69,7 +69,7 @@
         rounded="xl"
         style="margin:1rem;padding:1rem;display:flex;align-items:center;
         background:url(https://www.bosch-ebike.com/fileadmin/_processed_/8/8/csm_Bosch-eBike-DTF-Elsass-MY2020-24_Print__300_dpi__p2_85567d1910.jpg?_=1592980405);"
-        @click="$router.push('/cam')"
+        @click="$router.push('/camera')"
       >
         <v-card-text class="text-center content-text">
           Camera
@@ -182,6 +182,11 @@ import XDBike from "@/components/3D-Bike.vue";
 export default {
   name: "DashBoard",
   components: { XDBike },
+  data() {
+    return {
+      timer: null,
+    };
+  },
   computed: {
     temperature() {
       return this.$store.state.environment.temperature;
@@ -213,12 +218,25 @@ export default {
     },
   },
   methods: {
-    switchFrontLight() {
+    async switchFrontLight() {
       this.frontLight = !this.frontLight;
+      await this.$store.dispatch("updateLight1", this.frontLight);
     },
-    switchBackLight() {
+    async switchBackLight() {
       this.backLight = !this.backLight;
+      await this.$store.dispatch("updateLight2", this.backLight);
     },
+    async update() {
+      await this.$store.dispatch("updatePressure");
+      await this.$store.dispatch("updateTemperature");
+      await this.$store.dispatch("updateGeo");
+    },
+  },
+  beforeDestroy() {
+    clearInterval(this.timer);
+  },
+  mounted() {
+    this.timer = setInterval(this.update, 1000);
   },
 };
 </script>

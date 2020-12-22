@@ -31,9 +31,6 @@ export default {
       map.enableScrollWheelZoom(true);
 
       this.geolocation = new BMapGL.Geolocation();
-      this.mk = new BMapGL.Marker(new BMapGL.Point(121.814224, 31.156484));
-
-      this.map.addOverlay(this.mk);
       this.timer = setInterval(this.updatePos, 1000);
       this.driving = new BMapGL.WalkingRoute(this.map, {
         renderOptions: { map: this.map, autoViewport: false },
@@ -42,14 +39,22 @@ export default {
     updatePos() {
       let that = this;
       this.geolocation.getCurrentPosition(
-        function(r) {
+        async function(r) {
           if (this.getStatus() == BMAP_STATUS_SUCCESS) {
+            
+            that.mk = new BMapGL.Marker(r.point);
             that.map.panTo(r.point);
-            that.mk.setPoint(r.point);
-            var p1 = r.point;
-            var p2 = new BMapGL.Point(120.1, 30.25);
+            that.map.addOverlay(that.mk);
+            try {
+              await that.$store.dispatch("updateGeo");
+              var p1 = r.point;
+              var p2 = new BMapGL.Point(
+                that.$store.state.environment.geo.lat,
+                that.$store.state.environment.geo.lng
+              );
 
-            that.driving.search(p1, p2);
+              that.driving.search(p1, p2);
+            } catch {}
           } else {
             alert("failed" + this.getStatus());
           }
