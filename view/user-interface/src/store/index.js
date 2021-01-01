@@ -20,8 +20,8 @@ export default new Vuex.Store({
         speed:0,
         altitude:0,
         pressure:0
-    }
-    
+    },
+    showWindow:false
   },
   mutations: {
     setTemperature(state, payload){

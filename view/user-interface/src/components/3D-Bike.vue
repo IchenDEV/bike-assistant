@@ -43,6 +43,9 @@ export default {
       data = await data.json();
       this.rotation.x = data.data.pitch / 3.14;
       this.rotation.z = -(data.data.roll - 90) / 2;
+
+      if(this.rotation.z>1||this.rotation.z<-1)this.$store.state.showWindow=true;
+      else this.$store.state.showWindow=false;
       console.log(this.rotation);
       requestAnimationFrame(this.rotate);
     },
