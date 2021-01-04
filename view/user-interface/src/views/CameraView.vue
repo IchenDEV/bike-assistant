@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-img class="camera" src="http://127.0.0.1:8003/video_feed" />
+    <v-img class="camera" src="/video_feed" />
   </div>
 </template>
 

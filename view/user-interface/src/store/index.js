@@ -51,15 +51,15 @@ export default new Vuex.Store({
   },
   actions: {
     async updateTemperature(context) {
-      let res = await (await fetch("http://127.0.0.1:8003/temperature")).json();
+      let res = await (await fetch("/temperature")).json();
       context.commit('setTemperature',res.data.toString().substr(0,4));
     },
     async updatePressure(context) {
-      let res = await (await fetch("http://127.0.0.1:8003/pressure")).json();
+      let res = await (await fetch("/pressure")).json();
       context.commit('setPressure',res.data.toString().substr(0,4));
     },
     async updateGeo(context) {
-      let res = await (await fetch("http://127.0.0.1:8003/location")).json();
+      let res = await (await fetch("/location")).json();
       context.commit('setSpeed',res.data.speed);
       context.commit('setAltitude',res.data.altitude);
       context.commit('setGeo',{lat:res.data.latitude,lng:res.data.longitude});
@@ -67,16 +67,16 @@ export default new Vuex.Store({
     },
     async updateLight1(context,payload) {
       if(!payload)
-      await (await fetch("http://127.0.0.1:8003/light/up")).json();
+      await (await fetch("/light/up")).json();
       else
-      await (await fetch("http://127.0.0.1:8003/light/down")).json();
+      await (await fetch("/light/down")).json();
       context.commit('setLight1',res.data);
     },
     async updateLight2(context,payload) {
       if(!payload)
-      await (await fetch("http://127.0.0.1:8003/light2/up")).json();
+      await (await fetch("/light2/up")).json();
       else
-      await (await fetch("http://127.0.0.1:8003/light2/down")).json();
+      await (await fetch("/light2/down")).json();
       context.commit('setLight2',res.data);
       
     },

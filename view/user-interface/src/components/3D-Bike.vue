@@ -39,7 +39,7 @@ export default {
       this.rotate();
     },
     async rotate() {
-      let data = await fetch("http://127.0.0.1:8003/posture");
+      let data = await fetch("/posture");
       data = await data.json();
       this.rotation.x = data.data.pitch / 3.14;
       this.rotation.z = -(data.data.roll - 90) / 2;
