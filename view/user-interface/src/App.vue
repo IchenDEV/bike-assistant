@@ -38,7 +38,7 @@ export default {
   display: none;
 }
 html {
-  overflow-y: hidden;
+  overflow-y: scroll;
 }
 .warl {
   margin: 1rem;
