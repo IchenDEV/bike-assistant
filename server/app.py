@@ -12,6 +12,7 @@ from bmp_280 import BMP280
 import threading
 from imutils.video import VideoStream
 from flask import Response
+from playsound import playsound
 from flask import Flask
 from flask import render_template
 import threading
@@ -97,7 +98,8 @@ def pressure():
 
 @app.route('/sound/play')
 def play_sound():
-    return jsonify({"code":0,"msg":"OK" })
+	playsound('jtw.mp3')
+	return jsonify({"code":0,"msg":"OK" })
 
 @app.route('/sound/stop')
 def stop_sound():
