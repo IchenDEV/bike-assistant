@@ -67,7 +67,7 @@ CORS(app, supports_credentials=True)  # 设置跨域
 
 @app.route('/')
 def index():
-    return app.send_static_file('html/index.html')
+    return app.send_static_file('index.html')
 
 @app.route('/location')
 def location():
@@ -211,4 +211,4 @@ if __name__ == '__main__':
     t = threading.Thread(target=detect_motion, args=(1,))
     t.daemon = True
     t.start()
-    app.run(port=8003,threaded=True, use_reloader=False)
+    app.run(host="0.0.0.0", port=8004,threaded=True, use_reloader=False,ssl_context='adhoc')
