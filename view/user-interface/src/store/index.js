@@ -16,12 +16,12 @@ export default new Vuex.Store({
           lat:30,
           lng:122,
         },
-        temperature:23.9,
-        speed:100,
-        altitude:100,
-        pressure:8
-    }
-    
+        temperature:0,
+        speed:0,
+        altitude:0,
+        pressure:0
+    },
+    showWindow:false
   },
   mutations: {
     setTemperature(state, payload){
@@ -51,26 +51,32 @@ export default new Vuex.Store({
   },
   actions: {
     async updateTemperature(context) {
-      let res = await (await fetch("http://127.0.0.1:8001/temperature")).json();
-      context.commit('setTemperature',res.data);
+      let res = await (await fetch("/temperature")).json();
+      context.commit('setTemperature',res.data.toString().substr(0,4));
     },
     async updatePressure(context) {
-      let res = await (await fetch("http://127.0.0.1:8001/pressure")).json();
-      context.commit('setPressure',res.data);
+      let res = await (await fetch("/pressure")).json();
+      context.commit('setPressure',res.data.toString().substr(0,4));
     },
     async updateGeo(context) {
-      let res = await (await fetch("http://127.0.0.1:8001/location")).json();
+      let res = await (await fetch("/location")).json();
       context.commit('setSpeed',res.data.speed);
       context.commit('setAltitude',res.data.altitude);
       context.commit('setGeo',{lat:res.data.latitude,lng:res.data.longitude});
       return {lat:res.data.latitude,lng:res.data.longitude}
     },
     async updateLight1(context,payload) {
-      let res = await (await fetch("http://127.0.0.1:8001/set/light/"+payload)).json();
+      if(!payload)
+      await (await fetch("/light/up")).json();
+      else
+      await (await fetch("/light/down")).json();
       context.commit('setLight1',res.data);
     },
     async updateLight2(context,payload) {
-      let res = await (await fetch("http://127.0.0.1:8001/set/light"+payload)).json();
+      if(!payload)
+      await (await fetch("/light2/up")).json();
+      else
+      await (await fetch("/light2/down")).json();
       context.commit('setLight2',res.data);
       
     },

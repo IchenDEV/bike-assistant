@@ -4,6 +4,7 @@ import TrackMapView from '../views/TrackMapView.vue'
 import FinderMapView from '../views/BikeFinderView.vue'
 import DashBoard from '../views/DashBoard.vue'
 import PostureView from '../views/PostureView.vue'
+import CameraView from '../views/CameraView.vue'
 
 Vue.use(VueRouter)
 
@@ -27,6 +28,11 @@ const routes = [
     path: '/finder',
     name: 'Finder',
     component: FinderMapView
+  },
+  {
+    path: '/camera',
+    name: 'Camera',
+    component: CameraView
   }
 ]
 

@@ -39,10 +39,13 @@ export default {
       this.rotate();
     },
     async rotate() {
-      let data = await fetch("http://127.0.0.1:8001/posture");
+      let data = await fetch("/posture");
       data = await data.json();
       this.rotation.x = data.data.pitch / 3.14;
       this.rotation.z = -(data.data.roll - 90) / 2;
+
+      if(this.rotation.z>1||this.rotation.z<-1)this.$store.state.showWindow=true;
+      else this.$store.state.showWindow=false;
       console.log(this.rotation);
       requestAnimationFrame(this.rotate);
     },

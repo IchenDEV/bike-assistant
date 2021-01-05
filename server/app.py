@@ -62,12 +62,12 @@ bmp280 = BMP280(i2c_dev=bus)
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(11, GPIO.OUT)
 GPIO.setup(12, GPIO.OUT)
-app = Flask(__name__)
+app = Flask(__name__,static_url_path='')
 CORS(app, supports_credentials=True)  # 设置跨域
 
 @app.route('/')
 def index():
-    return jsonify({"code":0,"msg":"OK" })
+    return app.send_static_file('html/index.html')
 
 @app.route('/location')
 def location():
