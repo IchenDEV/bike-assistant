@@ -29,7 +29,7 @@ export default {
     async pathStart() {
       this.maps = new BMapGL.Map("allmap");
       this.maps.enableScrollWheelZoom(true);
-      this.maps.centerAndZoom(new BMapGL.Point(121.814224, 31.156484), 10);
+      this.maps.centerAndZoom(new BMapGL.Point(121.814224, 31.156484), 15);
       await this.$store.dispatch("updateGeo");
       this.timer = setInterval(this.updatePotion, 1000);
     },
@@ -69,6 +69,8 @@ export default {
         if (data.status === 0) {
           list.push(data.points[0]);
           this.pl.setPath(list);
+          this.pl.setStrokeWeight(5);
+          this.pl.setStrokeColor('Aqua');
           this.maps.panTo(data.points[0]);
         }
       });
