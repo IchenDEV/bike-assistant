@@ -44,8 +44,16 @@ export default {
       this.rotation.x = data.data.pitch / 3.14;
       this.rotation.z = -(data.data.roll - 90) / 2;
 
-      if(this.rotation.z>1||this.rotation.z<-1)this.$store.state.showWindow=true;
-      else this.$store.state.showWindow=false;
+      if(this.rotation.z>1||this.rotation.z<-1){
+        let audio = document.getElementById("audio");
+        audio.play();
+        this.$store.state.showWindow=true;
+        }
+      else {
+        let audio = document.getElementById("audio");
+        audio.stop();
+        this.$store.state.showWindow=false;
+      }
       console.log(this.rotation);
       requestAnimationFrame(this.rotate);
     },
