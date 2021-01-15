@@ -51,7 +51,7 @@ export default {
         }
       else {
         let audio = document.getElementById("audio");
-        audio.stop();
+        audio.pause();
         this.$store.state.showWindow=false;
       }
       console.log(this.rotation);
